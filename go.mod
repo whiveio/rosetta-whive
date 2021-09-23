@@ -1,4 +1,4 @@
-module github.com/coinbase/rosetta-whive
+module github.com/whiveio/rosetta-whive
 
 go 1.16
 
