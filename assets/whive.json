@@ -1,6 +1,6 @@
 {
  "network": {
-  "blockchain": "Bitcoin",
+  "blockchain": "Whive",
   "network": "Mainnet"
  },
  "online_url": "http://localhost:8080",
