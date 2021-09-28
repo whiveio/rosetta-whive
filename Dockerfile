@@ -24,14 +24,14 @@ RUN apt-get update && apt-get install -y make gcc g++ autoconf autotools-dev bsd
   libcurl4-openssl-dev libdb++-dev libevent-dev libssl-dev libtool pkg-config python python-pip libzmq3-dev wget
 
 # VERSION: Whive Core 2.17.0
-RUN git clone https://github.com/whiveio/whive/ 
-  #&& cd whive 
-  #&& git checkout 4f8b05f78f0b6abdcda705049231d3a639193659
+RUN git clone https://github.com/whiveio/whive \
+  && cd whive \
+  && git checkout f7acdd4cfd9f45620eb42b321e2e13204c0e989d
 
 RUN cd whive \
   && ./autogen.sh \
-  && ./configure --disable-tests  --without-gui --with-incompatible-bdb --disable-hardening --disable-zmq --disable-bench --disable-wallet \
-  && make -j 2
+  && ./configure --disable-tests --without-miniupnpc --without-gui --with-incompatible-bdb --disable-hardening --disable-zmq --disable-bench \
+  && make 
 
 RUN mv whive/src/whived /app/whived \
   && rm -rf whive
