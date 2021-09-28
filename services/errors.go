@@ -57,15 +57,15 @@ var (
 		Message: "Endpoint unavailable offline",
 	}
 
-	// ErrNotReady is returned when whived is not
+	// ErrNotReady is returned when bitcoind is not
 	// yet ready to serve queries.
 	ErrNotReady = &types.Error{
 		Code:      2, //nolint
-		Message:   "Whived is not ready",
+		Message:   "Bitcoind is not ready",
 		Retriable: true,
 	}
 
-	// ErrWhived is returned when whived
+	// ErrWhived is returned when bitcoind
 	// errors on a request.
 	ErrWhived = &types.Error{
 		Code:    3, //nolint

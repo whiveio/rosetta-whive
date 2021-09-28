@@ -16,9 +16,9 @@ version: 2.1
 executors:
   default:
     docker:
-      - image: circleci/golang:1.16
+      - image: circleci/golang:1.15
         user: root # go directory is owned by root
-    working_directory: /go/src/github.com/coinbase/rosetta-whive
+    working_directory: /go/src/github.com/whiveio/rosetta-whive
     environment:
       - GO111MODULE: "on"
 

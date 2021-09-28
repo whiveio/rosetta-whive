@@ -23,8 +23,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/whiveio/rosetta-whive/whive"
 	"github.com/whiveio/rosetta-whive/configuration"
+	"github.com/whiveio/rosetta-whive/whive"
 	mocks "github.com/whiveio/rosetta-whive/mocks/indexer"
 
 	"github.com/coinbase/rosetta-sdk-go/types"

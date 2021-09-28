@@ -24,8 +24,8 @@ import (
 	"math/big"
 	"strconv"
 
-	"github.com/whiveio/rosetta-whive/whive"
 	"github.com/whiveio/rosetta-whive/configuration"
+	"github.com/whiveio/rosetta-whive/whive"
 
 	"github.com/btcsuite/btcd/btcec"
 	"github.com/btcsuite/btcd/txscript"
@@ -37,7 +37,7 @@ import (
 )
 
 const (
-	// bytesInKB is the number of bytes in a KB. In Whive, this is
+	// bytesInKB is the number of bytes in a KB. In Bitcoin, this is
 	// considered to be 1000.
 	bytesInKb = float64(1000) // nolint:gomnd
 
@@ -197,7 +197,7 @@ func (s *ConstructionAPIService) ConstructionMetadata(
 	}
 
 	// Calculated the estimated fee in Satoshis
-	satoshisPerB := (feePerKB * float64(whive.SatoshisInWhive)) / bytesInKb
+	satoshisPerB := (feePerKB * float64(whive.SatoshisInBitcoin)) / bytesInKb
 	estimatedFee := satoshisPerB * options.EstimatedSize
 	suggestedFee := &types.Amount{
 		Value:    fmt.Sprintf("%d", int64(estimatedFee)),

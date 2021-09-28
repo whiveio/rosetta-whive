@@ -19,19 +19,19 @@ RUN mkdir -p /app \
   && chown -R nobody:nogroup /app
 WORKDIR /app
 
-# Source: https://github.com/whiveio/whive//blob/master/doc/build-unix.md#ubuntu--debian
+# Source: https://github.com/whiveio/whive/blob/release-1.0/doc/build-unix.md#ubuntu--debian
 RUN apt-get update && apt-get install -y make gcc g++ autoconf autotools-dev bsdmainutils build-essential git libboost-all-dev \
-  libcurl4-openssl-dev libdb++-dev libevent-dev libssl-dev libtool pkg-config python python-pip libzmq3-dev wget
+  libcurl4-openssl-dev libdb++-dev libevent-dev libssl-dev libtool pkg-config python python-pip libzmq3-dev wget git
 
-# VERSION: Whive Core 2.17.0
+# VERSION: WHIVE Core 2.17.0
 RUN git clone https://github.com/whiveio/whive \
   && cd whive \
   && git checkout f7acdd4cfd9f45620eb42b321e2e13204c0e989d
 
-RUN cd whive \
+RUN cd whive\
   && ./autogen.sh \
   && ./configure --disable-tests --without-miniupnpc --without-gui --with-incompatible-bdb --disable-hardening --disable-zmq --disable-bench \
-  && make 
+  && make
 
 RUN mv whive/src/whived /app/whived \
   && rm -rf whive
@@ -58,19 +58,19 @@ ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
 RUN mkdir -p "$GOPATH/src" "$GOPATH/bin" && chmod -R 777 "$GOPATH"
 
 # Use native remote build context to build in any directory
-COPY . src 
+COPY . src
 RUN cd src \
   && go build \
   && cd .. \
   && mv src/rosetta-whive /app/rosetta-whive \
   && mv src/assets/* /app \
-  && rm -rf src 
+  && rm -rf src
 
 ## Build Final Image
 FROM ubuntu:18.04
 
 RUN apt-get update && \
-  apt-get install --no-install-recommends -y libevent-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev && \
+  apt-get install --no-install-recommends -y libevent-dev libboost-system-dev libboost-filesystem-dev libboost-test-dev libboost-thread-dev libdb++-dev && \
   apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 RUN mkdir -p /app \

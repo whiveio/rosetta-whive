@@ -45,7 +45,7 @@ const (
 	// Mainnet is the Whive Mainnet.
 	Mainnet string = "MAINNET"
 
-	// Testnet is Whive Testnet3.
+	// Testnet is Whive Testnet.
 	Testnet string = "TESTNET"
 
 	// mainnetConfigPath is the path of the Whive
@@ -64,13 +64,13 @@ const (
 	mainnetRPCPort = 1867
 	testnetRPCPort = 18867
 
-	// min prune depth is 288:
-	// https://github.com/whiveio/whive//blob/ad2952d17a2af419a04256b10b53c7377f826a27/src/validation.h#L84
+	// min prune depth is 2160:
+	// https://github.com/whiveio/whive/blob/098b0a1e43f57cbc54c8efa558567152bef5c9f5/src/validation.h#L84
 	pruneDepth = int64(10000) //nolint
 
 	// min prune height (on mainnet):
-	// https://github.com/whiveio/whive//blob/62d137ac3b701aae36c1aa3aa93a83fd6357fde6/src/chainparams.cpp#L102
-	minPruneHeight = int64(100000) //nolint
+	// https://github.com/whiveio/whive/blob/0cdc55c1d34d351014caf95d6448c4d8c6f7043a/src/chainparams.cpp#146
+	minPruneHeight = int64(1000) //nolint
 
 	// attempt to prune once an hour
 	pruneFrequency = 60 * time.Minute
@@ -79,8 +79,8 @@ const (
 	// persistent data.
 	DataDirectory = "/data"
 
-	whivedPath = "whived"
-	indexerPath  = "indexer"
+	whivedPath    = "whived"
+	indexerPath = "indexer"
 
 	// allFilePermissions specifies anyone can do anything
 	// to the file.
@@ -120,7 +120,7 @@ type Configuration struct {
 	ConfigPath             string
 	Pruning                *PruningConfiguration
 	IndexerPath            string
-	WhivedPath           string
+	WhivedPath               string
 	Compressors            []*encoder.CompressorEntry
 }
 

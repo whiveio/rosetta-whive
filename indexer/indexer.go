@@ -22,8 +22,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/whiveio/rosetta-whive/whive"
 	"github.com/whiveio/rosetta-whive/configuration"
+	"github.com/whiveio/rosetta-whive/whive"
 	"github.com/whiveio/rosetta-whive/services"
 	"github.com/whiveio/rosetta-whive/utils"
 
@@ -212,7 +212,6 @@ func Initialize(
 		whive.OperationStatuses,
 		services.Errors,
 		nil,
-		new(asserter.Validations),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("%w: unable to initialize asserter", err)
@@ -251,7 +250,7 @@ func Initialize(
 	return i, nil
 }
 
-// waitForNode returns once whived is ready to serve
+// waitForNode returns once bitcoind is ready to serve
 // block queries.
 func (i *Indexer) waitForNode(ctx context.Context) error {
 	logger := utils.ExtractLogger(ctx, "indexer")
@@ -268,7 +267,7 @@ func (i *Indexer) waitForNode(ctx context.Context) error {
 	}
 }
 
-// Sync attempts to index Whive blocks using
+// Sync attempts to index Bitcoin blocks using
 // the whive.Client until stopped.
 func (i *Indexer) Sync(ctx context.Context) error {
 	if err := i.waitForNode(ctx); err != nil {
@@ -302,7 +301,7 @@ func (i *Indexer) Sync(ctx context.Context) error {
 	return syncer.Sync(ctx, startIndex, indexPlaceholder)
 }
 
-// Prune attempts to prune blocks in whived every
+// Prune attempts to prune blocks in bitcoind every
 // pruneFrequency.
 func (i *Indexer) Prune(ctx context.Context) error {
 	logger := utils.ExtractLogger(ctx, "pruner")
@@ -323,23 +322,23 @@ func (i *Indexer) Prune(ctx context.Context) error {
 
 			// Must meet pruning conditions in whive core
 			// Source:
-			// https://github.com/whiveio/whive//blob/a63a26f042134fa80356860c109edb25ac567552/src/rpc/blockchain.cpp#L953-L960
+			// https://github.com/bitcoin/bitcoin/blob/a63a26f042134fa80356860c109edb25ac567552/src/rpc/blockchain.cpp#L953-L960
 			pruneHeight := head.Index - i.pruningConfig.Depth
 			if pruneHeight <= i.pruningConfig.MinHeight {
 				logger.Infow("waiting to prune", "min prune height", i.pruningConfig.MinHeight)
 				continue
 			}
 
-			logger.Infow("attempting to prune whived", "prune height", pruneHeight)
+			logger.Infow("attempting to prune bitcoind", "prune height", pruneHeight)
 			prunedHeight, err := i.client.PruneBlockchain(ctx, pruneHeight)
 			if err != nil {
 				logger.Warnw(
-					"unable to prune whived",
+					"unable to prune bitcoind",
 					"prune height", pruneHeight,
 					"error", err,
 				)
 			} else {
-				logger.Infow("pruned whived", "prune height", prunedHeight)
+				logger.Infow("pruned bitcoind", "prune height", prunedHeight)
 			}
 		}
 	}

@@ -25,7 +25,7 @@ import (
 const (
 	// NodeVersion is the version of
 	// whive core we are using.
-	NodeVersion = "2.17.0"
+	NodeVersion = "2.0.0"
 
 	// HistoricalBalanceLookup indicates
 	// that historical balance lookup is supported.
@@ -85,10 +85,10 @@ type Indexer interface {
 }
 
 type unsignedTransaction struct {
-	Transaction    string                  `json:"transaction"`
+	Transaction    string                          `json:"transaction"`
 	ScriptPubKeys  []*whive.ScriptPubKey `json:"scriptPubKeys"`
-	InputAmounts   []string                `json:"input_amounts"`
-	InputAddresses []string                `json:"input_addresses"`
+	InputAmounts   []string                        `json:"input_amounts"`
+	InputAddresses []string                        `json:"input_addresses"`
 }
 
 type preprocessOptions struct {

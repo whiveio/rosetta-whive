@@ -18,8 +18,8 @@ import (
 	"context"
 	"testing"
 
-	"github.com/whiveio/rosetta-whive/whive"
 	"github.com/whiveio/rosetta-whive/configuration"
+	"github.com/whiveio/rosetta-whive/whive"
 	mocks "github.com/whiveio/rosetta-whive/mocks/services"
 
 	"github.com/coinbase/rosetta-sdk-go/types"
@@ -31,7 +31,7 @@ var (
 	defaultNetworkOptions = &types.NetworkOptionsResponse{
 		Version: &types.Version{
 			RosettaVersion:    types.RosettaAPIVersion,
-			NodeVersion:       "2.17.0",
+			NodeVersion:       "0.20.1",
 			MiddlewareVersion: &middlewareVersion,
 		},
 		Allow: &types.Allow{
@@ -104,7 +104,7 @@ func TestNetworkEndpoints_Online(t *testing.T) {
 	}
 	mockClient.On("GetPeers", ctx).Return([]*types.Peer{
 		{
-			PeerID: "206.189.2.17:8372",
+			PeerID: "77.93.223.9:8333",
 		},
 	}, nil)
 	mockIndexer.On(
@@ -122,7 +122,7 @@ func TestNetworkEndpoints_Online(t *testing.T) {
 		CurrentBlockIdentifier: blockResponse.Block.BlockIdentifier,
 		Peers: []*types.Peer{
 			{
-				PeerID: "206.189.2.17:8372",
+				PeerID: "77.93.223.9:8333",
 			},
 		},
 	}, networkStatus)

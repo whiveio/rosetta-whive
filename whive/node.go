@@ -29,8 +29,8 @@ import (
 )
 
 const (
-	whivedLogger       = "whived"
-	whivedStdErrLogger = "whived stderr"
+	bitcoindLogger       = "whived"
+	bitcoindStdErrLogger = "whived stderr"
 )
 
 func logPipe(ctx context.Context, pipe io.ReadCloser, identifier string) error {
@@ -51,8 +51,8 @@ func logPipe(ctx context.Context, pipe io.ReadCloser, identifier string) error {
 			message = messages[1]
 		}
 
-		// Print debug log if from whivedLogger
-		if identifier == whivedLogger {
+		// Print debug log if from bitcoindLogger
+		if identifier == bitcoindLogger {
 			logger.Debugw(message)
 			continue
 		}
@@ -61,9 +61,9 @@ func logPipe(ctx context.Context, pipe io.ReadCloser, identifier string) error {
 	}
 }
 
-// StartWhived starts a whived daemon in another goroutine
+// StartBitcoind starts a bitcoind daemon in another goroutine
 // and logs the results to the console.
-func StartWhived(ctx context.Context, configPath string, g *errgroup.Group) error {
+func StartBitcoind(ctx context.Context, configPath string, g *errgroup.Group) error {
 	logger := utils.ExtractLogger(ctx, "whived")
 	cmd := exec.Command(
 		"/app/whived",
@@ -81,21 +81,21 @@ func StartWhived(ctx context.Context, configPath string, g *errgroup.Group) erro
 	}
 
 	g.Go(func() error {
-		return logPipe(ctx, stdout, whivedLogger)
+		return logPipe(ctx, stdout, bitcoindLogger)
 	})
 
 	g.Go(func() error {
-		return logPipe(ctx, stderr, whivedStdErrLogger)
+		return logPipe(ctx, stderr, bitcoindStdErrLogger)
 	})
 
 	if err := cmd.Start(); err != nil {
-		return fmt.Errorf("%w: unable to start whived", err)
+		return fmt.Errorf("%w: unable to start bitcoind", err)
 	}
 
 	g.Go(func() error {
 		<-ctx.Done()
 
-		logger.Warnw("sending interrupt to whived")
+		logger.Warnw("sending interrupt to bitcoind")
 		return cmd.Process.Signal(os.Interrupt)
 	})
 

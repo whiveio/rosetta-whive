@@ -2,16 +2,12 @@
 	run-testnet-offline check-comments add-license check-license shorten-lines test \
 	coverage spellcheck salus build-local coverage-local format check-format
 
-ADDLICENSE_INSTALL=go install github.com/google/addlicense@latest
-ADDLICENSE_CMD=addlicense
+ADDLICENSE_CMD=go run github.com/google/addlicense
 ADDLICENCE_SCRIPT=${ADDLICENSE_CMD} -c "Coinbase, Inc." -l "apache" -v
 SPELLCHECK_CMD=go run github.com/client9/misspell/cmd/misspell
-GOLINES_INSTALL=go install github.com/segmentio/golines@latest
-GOLINES_CMD=golines
-GOLINT_INSTALL=go get golang.org/x/lint/golint
-GOLINT_CMD=golint
-GOVERALLS_INSTALL=go install github.com/mattn/goveralls@latest
-GOVERALLS_CMD=goveralls
+GOLINES_CMD=go run github.com/segmentio/golines
+GOLINT_CMD=go run golang.org/x/lint/golint
+GOVERALLS_CMD=go run github.com/mattn/goveralls
 GOIMPORTS_CMD=go run golang.org/x/tools/cmd/goimports
 GO_PACKAGES=./services/... ./indexer/... ./whive/... ./configuration/...
 GO_FOLDERS=$(shell echo ${GO_PACKAGES} | sed -e "s/\.\///g" | sed -e "s/\/\.\.\.//g")
@@ -35,13 +31,13 @@ build-release:
 	docker save rosetta-whive:$(version) | gzip > rosetta-whive-$(version).tar.gz;
 
 run-mainnet-online:
-	docker run -d --rm --ulimit "nofile=${NOFILE}:${NOFILE}" -v "${PWD}/whive-data:/data" -e "MODE=ONLINE" -e "NETWORK=MAINNET" -e "PORT=8080" -p 8080:8080 -p 8372:8372 rosetta-whive:latest
+	docker run -d --rm --ulimit "nofile=${NOFILE}:${NOFILE}" -v "${PWD}/whive-data:/data" -e "MODE=ONLINE" -e "NETWORK=MAINNET" -e "PORT=8080" -p 8080:8080 -p 8333:8333 rosetta-whive:latest
 
 run-mainnet-offline:
 	docker run -d --rm -e "MODE=OFFLINE" -e "NETWORK=MAINNET" -e "PORT=8081" -p 8081:8081 rosetta-whive:latest
 
 run-testnet-online:
-	docker run -d --rm --ulimit "nofile=${NOFILE}:${NOFILE}" -v "${PWD}/whive-data:/data" -e "MODE=ONLINE" -e "NETWORK=TESTNET" -e "PORT=8080" -p 8080:8080 -p 18373:18373 rosetta-whive:latest
+	docker run -d --rm --ulimit "nofile=${NOFILE}:${NOFILE}" -v "${PWD}/whive-data:/data" -e "MODE=ONLINE" -e "NETWORK=TESTNET" -e "PORT=8080" -p 8080:8080 -p 18333:18333 rosetta-whive:latest
 
 run-testnet-offline:
 	docker run -d --rm -e "MODE=OFFLINE" -e "NETWORK=TESTNET" -e "PORT=8081" -p 8081:8081 rosetta-whive:latest
@@ -50,23 +46,18 @@ train:
 	./zstd-train.sh $(network) transaction $(data-directory)
 
 check-comments:
-	${GOLINT_INSTALL}
 	${GOLINT_CMD} -set_exit_status ${GO_FOLDERS} .
-	go mod tidy
 
 lint: | check-comments
 	golangci-lint run --timeout 2m0s -v -E ${LINT_SETTINGS},gomnd
 
 add-license:
-	${ADDLICENSE_INSTALL}
 	${ADDLICENCE_SCRIPT} .
 
 check-license:
-	${ADDLICENSE_INSTALL}
 	${ADDLICENCE_SCRIPT} -check .
 
 shorten-lines:
-	${GOLINES_INSTALL}
 	${GOLINES_CMD} -w --shorten-comments ${GO_FOLDERS} .
 
 format:
@@ -80,8 +71,7 @@ check-format:
 test:
 	${TEST_SCRIPT}
 
-coverage:
-	${GOVERALLS_INSTALL}
+coverage:	
 	if [ "${COVERALLS_TOKEN}" ]; then ${TEST_SCRIPT} -coverprofile=c.out -covermode=count; ${GOVERALLS_CMD} -coverprofile=c.out -repotoken ${COVERALLS_TOKEN}; fi
 
 coverage-local:
@@ -97,5 +87,4 @@ mocks:
 	rm -rf mocks;
 	mockery --dir indexer --all --case underscore --outpkg indexer --output mocks/indexer;
 	mockery --dir services --all --case underscore --outpkg services --output mocks/services;
-	${ADDLICENSE_INSTALL}
 	${ADDLICENCE_SCRIPT} .;

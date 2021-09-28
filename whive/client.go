@@ -26,7 +26,7 @@ import (
 	"strconv"
 	"time"
 
-	whiveUtils "github.com/whiveio/rosetta-whive/utils"
+	bitcoinUtils "github.com/whiveio/rosetta-whive/utils"
 
 	"github.com/btcsuite/btcutil"
 	"github.com/coinbase/rosetta-sdk-go/types"
@@ -89,11 +89,11 @@ const (
 	dialTimeout    = 5 * time.Second
 
 	// timeMultiplier is used to multiply the time
-	// returned in Whive blocks to be milliseconds.
+	// returned in Bitcoin blocks to be milliseconds.
 	timeMultiplier = 1000
 
 	// rpc credentials are fixed in rosetta-whive
-	// because we never expose access to the raw whived
+	// because we never expose access to the raw bitcoind
 	// endpoints (that could be used perform an attack, like
 	// changing our peers).
 	rpcUsername = "rosetta"
@@ -109,10 +109,10 @@ var (
 	ErrJSONRPCError = errors.New("JSON-RPC error")
 )
 
-// Client is used to fetch blocks from whived and
-// to parse Whive block data into Rosetta types.
+// Client is used to fetch blocks from bitcoind and
+// to parse Bitcoin block data into Rosetta types.
 //
-// We opted not to use existing Whive RPC libraries
+// We opted not to use existing Bitcoin RPC libraries
 // because they don't allow providing context
 // in each request.
 type Client struct {
@@ -130,7 +130,7 @@ func LocalhostURL(rpcPort int) string {
 	return fmt.Sprintf("http://localhost:%d", rpcPort)
 }
 
-// NewClient creates a new Whive client.
+// NewClient creates a new Bitcoin client.
 func NewClient(
 	baseURL string,
 	genesisBlockIdentifier *types.BlockIdentifier,
@@ -161,7 +161,7 @@ func newHTTPClient(timeout time.Duration) *http.Client {
 }
 
 // NetworkStatus returns the *types.NetworkStatusResponse for
-// whived.
+// bitcoind.
 func (b *Client) NetworkStatus(ctx context.Context) (*types.NetworkStatusResponse, error) {
 	rawBlock, err := b.getBlock(ctx, nil)
 	if err != nil {
@@ -263,7 +263,7 @@ func (b *Client) ParseBlock(
 }
 
 // SendRawTransaction submits a serialized transaction
-// to whived.
+// to bitcoind.
 func (b *Client) SendRawTransaction(
 	ctx context.Context,
 	serializedTx string,
@@ -473,7 +473,7 @@ func (b *Client) getHashFromIndex(
 // contain duplicate UTXOs (which are no longer possible after BIP-30). This
 // function mirrors the behavior of a similar commit in whive-core.
 //
-// Source: https://github.com/whiveio/whive//commit/ab91bf39b7c11e9c86bb2043c24f0f377f1cf514
+// Source: https://github.com/bitcoin/bitcoin/commit/ab91bf39b7c11e9c86bb2043c24f0f377f1cf514
 func skipTransactionOperations(blockNumber int64, blockHash string, transactionHash string) bool {
 	if blockNumber == 91842 && blockHash == "00000000000a4d0a398161ffc163c503763b1f4360639393e0e4c8e300e0caec" &&
 		transactionHash == "d5d27987d2a3dfc724e359870c6644b40e497bdc0589a033220fe15429d88599" {
@@ -494,7 +494,7 @@ func (b *Client) parseTransactions(
 	block *Block,
 	coins map[string]*types.AccountCoin,
 ) ([]*types.Transaction, error) {
-	logger := whiveUtils.ExtractLogger(ctx, "client")
+	logger := bitcoinUtils.ExtractLogger(ctx, "client")
 
 	if block == nil {
 		return nil, errors.New("error parsing nil block")
@@ -569,7 +569,7 @@ func (b *Client) parseTxOperations(
 	txOps := []*types.Operation{}
 
 	for networkIndex, input := range tx.Inputs {
-		if whiveIsCoinbaseInput(input, txIndex, networkIndex) {
+		if bitcoinIsCoinbaseInput(input, txIndex, networkIndex) {
 			txOp, err := b.coinbaseTxOperation(input, int64(len(txOps)), int64(networkIndex))
 			if err != nil {
 				return nil, err
@@ -627,7 +627,7 @@ func (b *Client) parseTxOperations(
 }
 
 // parseOutputTransactionOperation returns the types.Operation for the specified
-// `whiveOutput` transaction output.
+// `bitcoinOutput` transaction output.
 func (b *Client) parseOutputTransactionOperation(
 	output *Output,
 	txHash string,
@@ -656,7 +656,7 @@ func (b *Client) parseOutputTransactionOperation(
 		CoinAction: types.CoinCreated,
 	}
 
-	// If we are unable to parse the output account (i.e. whived
+	// If we are unable to parse the output account (i.e. bitcoind
 	// returns a blank/nonstandard ScriptPubKey), we create an address as the
 	// concatenation of the tx hash and index.
 	//
@@ -698,17 +698,17 @@ func (b *Client) getInputTxHash(
 	txIndex int,
 	inputIndex int,
 ) (string, int64, bool) {
-	if whiveIsCoinbaseInput(input, txIndex, inputIndex) {
+	if bitcoinIsCoinbaseInput(input, txIndex, inputIndex) {
 		return "", -1, false
 	}
 
 	return input.TxHash, input.Vout, true
 }
 
-// whiveIsCoinbaseInput returns whether the specified input is
+// bitcoinIsCoinbaseInput returns whether the specified input is
 // the coinbase input. The coinbase input is always the first input in the first
 // transaction, and does not contain a previous transaction hash.
-func whiveIsCoinbaseInput(input *Input, txIndex int, inputIndex int) bool {
+func bitcoinIsCoinbaseInput(input *Input, txIndex int, inputIndex int) bool {
 	return txIndex == 0 && inputIndex == 0 && input.TxHash == "" && input.Coinbase != ""
 }
 
@@ -767,7 +767,7 @@ func (b *Client) parseAmount(amount float64) (uint64, error) {
 	return uint64(atomicAmount), nil
 }
 
-// parseOutputAccount parses a whiveScriptPubKey and returns an account
+// parseOutputAccount parses a bitcoinScriptPubKey and returns an account
 // identifier. The account identifier's address corresponds to the first
 // address encoded in the script.
 func (b *Client) parseOutputAccount(
@@ -803,7 +803,7 @@ func (b *Client) coinbaseTxOperation(
 	}, nil
 }
 
-// post makes a HTTP request to a Whive node
+// post makes a HTTP request to a Bitcoin node
 func (b *Client) post(
 	ctx context.Context,
 	method requestMethod,

@@ -7,16 +7,16 @@
    Rosetta Whive
 </h3>
 <p align="center">
-  <a href="https://circleci.com/gh/whiveio/rosetta-whive/tree/master"><img src="https://circleci.com/gh/whiveio/rosetta-whive/tree/master.svg?style=shield" /></a>
-  <a href="https://coveralls.io/github/coinbase/rosetta-whive"><img src="https://coveralls.io/repos/github/whiveio/rosetta-whive/badge.svg" /></a>
-  <a href="https://goreportcard.com/report/github.com/coinbase/rosetta-whive"><img src="https://goreportcard.com/badge/github.com/coinbase/rosetta-whive" /></a>
-  <a href="https://github.com/whiveio/rosetta-whive/blob/master/LICENSE.txt"><img src="https://img.shields.io/github/license/coinbase/rosetta-whive.svg" /></a>
-  <a href="https://pkg.go.dev/github.com/coinbase/rosetta-whive?tab=overview"><img src="https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=shield" /></a>
+  <a href="https://coveralls.io/github/coinbase/rosetta-bitcoin"><img src="https://coveralls.io/github/coinbase/rosetta-bitcoin/tree/master.svg?style=shield" /></a>
+  <a href="https://coveralls.io/github/coinbase/rosetta-bitcoin"><img src="https://coveralls.io/github/coinbase/rosetta-bitcoin/badge.svg" /></a>
+  <a href="https://goreportcard.com/report/github.com/whiveio/rosetta-whive"><img src="https://goreportcard.com/badge/github.com/whiveio/rosetta-whive" /></a>
+  <a href="https://github.com/whiveio/rosetta-whive/blob/master/LICENSE.txt"><img src="https://img.shields.io/github/license/whiveio/rosetta-whive.svg" /></a>
+  <a href="https://pkg.go.dev/github.com/whiveio/rosetta-whive?tab=overview"><img src="https://img.shields.io/badge/go.dev-reference-007d9c?logo=go&logoColor=white&style=shield" /></a>
 </p>
 
 <p align="center"><b>
-rosetta-whive IS CONSIDERED <a href="https://en.wikipedia.org/wiki/Software_release_life_cycle#Alpha">ALPHA SOFTWARE</a>.
-USE AT YOUR OWN RISK! COINBASE ASSUMES NO RESPONSIBILITY NOR LIABILITY IF THERE IS A BUG IN THIS IMPLEMENTATION.
+ROSETTA-WHIVE IS CONSIDERED <a href="https://en.wikipedia.org/wiki/Software_release_life_cycle#Alpha">ALPHA SOFTWARE</a>.
+USE AT YOUR OWN RISK! WHIVE ASSUMES NO RESPONSIBILITY NOR LIABILITY IF THERE IS A BUG IN THIS IMPLEMENTATION.
 </b></p>
 
 ## Overview
@@ -129,7 +129,7 @@ you can find a high-level overview of how everything fits together:
                                +-------------------+ pruner <----------+                |         |
                                |                 | +--------+          |                |         |
                          +-----v----+            |                     |                |         |
-                         | whived |            |              +------+--------+       |         |
+                         |    whived  |            |              +------+--------+       |         |
                          +-----+----+            |     +--------> block_storage <----+  |         |
                                |                 |     |        +---------------+    |  |         |
                                |                 | +---+----+                        |  |         |
@@ -170,7 +170,7 @@ multiple inputs from disk while it waits for inputs that appeared
 in recently processed blocks to save to disk.
 ```text
                                                    +----------+
-                                                   | whived |
+                                                   |    whived  |
                                                    +-----+----+
                                                          |
                                                          |
@@ -231,4 +231,4 @@ _Please reach out on our [community](https://community.rosetta-api.org) if you w
 ## License
 This project is available open source under the terms of the [Apache 2.0 License](https://opensource.org/licenses/Apache-2.0).
 
-© 2021 Coinbase
+© 2021 ElecletraProtocol Developers

@@ -24,8 +24,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/whiveio/rosetta-whive/whive"
 	"github.com/whiveio/rosetta-whive/configuration"
+	"github.com/whiveio/rosetta-whive/whive"
 	"github.com/whiveio/rosetta-whive/indexer"
 	"github.com/whiveio/rosetta-whive/services"
 	"github.com/whiveio/rosetta-whive/utils"
@@ -87,7 +87,7 @@ func startOnlineDependencies(
 	)
 
 	g.Go(func() error {
-		return whive.StartWhived(ctx, cfg.ConfigPath, g)
+		return whive.StartBitcoind(ctx, cfg.ConfigPath, g)
 	})
 
 	i, err := indexer.Initialize(
@@ -158,7 +158,6 @@ func main() {
 		[]*types.NetworkIdentifier{cfg.Network},
 		nil,
 		services.MempoolCoins,
-		"",
 	)
 	if err != nil {
 		logger.Fatalw("unable to create new server asserter", "error", err)
